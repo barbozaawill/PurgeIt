@@ -29,12 +29,12 @@ namespace PurgeIt.Core
         };
 
         private readonly CleanConfig _config;
-        private RuleEngine(CleanConfig config)
+        public RuleEngine(CleanConfig config)
         {
             _config = config;
         }
 
-        public (bool allowed, string reason) Evaluete(FileEntry file)
+        public (bool allowed, string reason) Evaluate(FileEntry file)
         {
             if (IsInBlockedPath(file.Path))
                 return (false, "blockedPath");
