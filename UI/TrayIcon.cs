@@ -22,13 +22,30 @@ namespace PurgeIt.UI
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = SystemIcons.Shield,
+                Icon = new Icon(Path.Combine(Application.StartupPath, "Resources", "black1000.ico")),
                 Visible = true,
                 ContextMenuStrip = _contextMenu,
                 Text = "PurgeIt"
             };
 
             _notifyIcon.DoubleClick += OnDoubleClick;
+        }
+
+        private void SetMode(string mode)
+        {
+            if (mode == "Aggressive")
+            {
+                var warningForm = new AggressiveWarningForm();
+                warningForm.ShowDialog();
+                if (!warningForm.Confirmed)
+                    return;
+            }
+
+            var config = _configService.Load();
+            config.Mode = mode;
+            _configService.Save(config);
+
+            ShowNotification("PurgeIt", $"Modo alterado para {mode}");
         }
 
         //monta o menu de contexto
@@ -45,6 +62,29 @@ namespace PurgeIt.UI
             var itemOpenLog = new ToolStripMenuItem("Ver log");
             itemOpenLog.Click += OnOpenLog;
 
+            var itemSelectMode = new ToolStripMenuItem("Modo de limpeza");
+
+            var itemSafe = new ToolStripMenuItem("Safe");
+            var itemBalanced = new ToolStripMenuItem("Balanced");
+            var itemAggressive = new ToolStripMenuItem("Aggressive");
+
+            var currentConfig = _configService.Load();
+            switch (currentConfig.Mode)
+            {
+                case "Safe": itemSafe.Checked = true; break;
+                case "Balanced": itemBalanced.Checked = true; break;
+                case "Aggressive": itemAggressive.Checked = true; break;
+            }
+
+            itemSafe.Click += (s, e) => SetMode("Safe");
+            itemBalanced.Click += (s, e) => SetMode("Balanced");
+            itemAggressive.Click += (s, e) => SetMode("Aggressive");
+
+            itemSelectMode.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                itemSafe, itemBalanced, itemAggressive
+            });
+
             var itemSeparator = new ToolStripSeparator();
 
             var itemExit = new ToolStripMenuItem("Sair");
@@ -55,6 +95,7 @@ namespace PurgeIt.UI
                 itemCleanNow,
                 itemDryRun,
                 itemOpenLog,
+                itemSelectMode,
                 itemSeparator,
                 itemExit
             });
@@ -188,7 +229,7 @@ namespace PurgeIt.UI
             }
         }
 
-        public void ShowNotification(string title, string message)
+        public void ShowNotification(string title, string message) 
         {
             _notifyIcon.ShowBalloonTip(
                 timeout: 4000,
