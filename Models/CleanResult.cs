@@ -18,7 +18,7 @@ namespace PurgeIt.Models
         public bool WasDryRun { get; set; } = false;
 
         public double TotalMBFreed => Math.Round(TotalBytesFreed / 1024.0 / 1024.0, 2);
-        public double TotalGBFreed => Math.Round(TotalGBFreed / 1024.0 / 1024.0 / 1024.0, 2);
+        public double TotalGBFreed => Math.Round(TotalBytesFreed / 1024.0 / 1024.0 / 1024.0, 2);
         public double QuarantineSizeMB => Math.Round(QuarantineSizeMB / 1024.0 / 1024.0, 2);
     }
 }

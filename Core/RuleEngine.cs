@@ -65,15 +65,17 @@ namespace PurgeIt.Core
 
         private bool IsInBlockedPath(string filePath)
         {
+            string normalizedFile = Path.GetFullPath(filePath);
+
             foreach (string blocked in BlockedPaths)
             {
-                string normalizedFile = Path.GetFullPath(filePath);
                 string normalizedBlocked = Path.GetFullPath(blocked);
 
-                if (normalizedFile.StartsWith(normalizedBlocked + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                if (normalizedFile.Equals(normalizedBlocked, StringComparison.OrdinalIgnoreCase))
                     return true;
 
-                if (normalizedFile.Equals(normalizedBlocked, StringComparison.OrdinalIgnoreCase))
+                string? parentFolder = Path.GetDirectoryName(normalizedFile);
+                if (parentFolder != null && parentFolder.Equals(normalizedBlocked, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
             return false;

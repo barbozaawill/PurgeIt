@@ -22,8 +22,8 @@ namespace PurgeIt.Core
             (GetSteamPath("logs"),                                                      "hard",   0,  "Safe"),
             (GetSteamPath("appcache"),                                                  "hard",   0,  "Safe"),
             (GetSteamPath("depotcache"),                                                "hard",   0,  "Safe"),
-            (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                .Replace("Documents", "Downloads"),                                     "soft",   14, "Balanced"),
+            (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                +@"\Downloads",                                     "soft",   14, "Balanced"),
             (@"C:\$Recycle.Bin",                                                        "soft",   30, "Balanced"),
             (GetSteamPath("shadercache"),                                               "soft",   0,  "Balanced"),
             (@"C:\Windows\SoftwareDistribution\Download",                               "manual", 0,  "Aggressive"),
@@ -76,8 +76,11 @@ namespace PurgeIt.Core
 
                             var (allowed, reason) = _ruleEngine.Evaluate(entry);
 
+                            ConsoleHelper.Log($"{(allowed ? "OK" : "SKIP")} | {reason} | {filePath}", _config.Verbose);
+
                             if (allowed)
                                 result.Add(entry);
+                                
                             else
                                 _logService.LogSkipped(entry, reason);
                         }

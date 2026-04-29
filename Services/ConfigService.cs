@@ -21,6 +21,12 @@ namespace PurgeIt.Services
             }
 
             string json = File.ReadAllText(ConfigPath);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             return JsonSerializer.Deserialize<CleanConfig>(json) ?? new CleanConfig();
         }
 

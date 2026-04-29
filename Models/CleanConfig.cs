@@ -10,6 +10,7 @@ namespace PurgeIt.Models
     {
         public bool FirstRun { get; set; } = true;
         public string Mode { get; set; } = "Safe";
+        public DateTime LastCleanDate { get; set; } = DateTime.MinValue;
         public List<FolderConfig> Folders { get; set; } = new List<FolderConfig>();
         public int MinFileSizeKB { get; set; } = 0;
         public double MaxDownloadSizeGB { get; set; } = 1.0;
